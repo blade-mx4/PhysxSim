@@ -7,6 +7,8 @@
 #include <glm/gtc/type_ptr.hpp> 
 #include "utils.h"
 
+Camera cam ;
+
 Engine::Engine(){
     glfwInit(); 
     window = glfwCreateWindow(W,H,"SIM WINDOW ",NULL,NULL);
@@ -17,10 +19,16 @@ Engine::Engine(){
 
     }
     glfwMakeContextCurrent(window);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     if (glewInit()!=GLEW_OK){
         std::cout<<"GLEW INIT ERROR"<<"\n" ;
         glfwTerminate();
     }
+    // glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    // glfwSetWindowUserPointer(window ,&cam);
+    // glfwSetCursorPosCallback(window, Camera::Mouse_Pan);
+    // glfwSetScrollCallback(window,Camera::Mouse_Scroll);
+
     glViewport(0,0,W,H) ;
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
@@ -56,13 +64,14 @@ void Engine::draw(){
     glm::mat4 proj = glm::mat4(1.0f) ;
     proj = glm::perspective(glm::radians(75.0f) ,static_cast<float>(640)  / static_cast<float>(480), 0.1f,100.0f);
     glUniformMatrix4fv(glGetUniformLocation(ps,"proj"),1,GL_FALSE,glm::value_ptr(proj)) ;
+    
 }
 
 // ================== Platform / Ground ================== //
 
 
 Platform::Platform() {
-        float size = 20.0f ;
+        float size = 20.0f ; // this code was stolen not me 
         int divisions = 40 ;
         float half = size / 2.0f;
         std::vector<float> vertices = {
@@ -135,3 +144,49 @@ void Camera::Move(GLFWwindow *window ,GLuint ps ){
         view = glm::lookAt(camPos,camPos+camFront,camUp);
         glUniformMatrix4fv(glGetUniformLocation(ps,"view"),1,GL_FALSE,glm::value_ptr(view));
 }
+
+// void Camera::Mouse_Pan(GLFWwindow* window, double xposIn, double yposIn){
+//     Camera* camera = static_cast<Camera *>(glfwGetWindowUserPointer(window)) ;
+//     float xpos = static_cast<float>(xposIn);
+//     float ypos = static_cast<float>(yposIn);
+
+//     if (camera->firstMouse)
+//     {
+//         camera->lastX = xpos;
+//         camera->lastY = ypos;
+//         camera->firstMouse = false;
+//     }
+
+//     float xoffset = xpos - camera->lastX;
+//     float yoffset = camera->lastY - ypos; // reversed since y-coordinates go from bottom to top
+//     camera->lastX = xpos;
+//     camera->lastY = ypos;
+
+//     float sensitivity = 0.1f; // change this value to your liking
+//     xoffset *= sensitivity;
+//     yoffset *= sensitivity;
+
+//     camera->yaw += xoffset;
+//     camera->pitch += yoffset;
+
+//     // make sure that when pitch is out of bounds, screen doesn't get flipped
+//     if (camera->pitch > 89.0f)
+//         camera->pitch = 89.0f;
+//     if (camera->pitch < -89.0f)
+//         camera->pitch = -89.0f;
+
+//     glm::vec3 front;
+//     front.x = cos(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
+//     front.y = sin(glm::radians(camera->pitch));
+//     front.z = sin(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
+//     camera->camFront = glm::normalize(front);
+// }
+// void Camera::Mouse_Scroll(GLFWwindow* window, double xoffset, double yoffset){
+//     Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+
+//     camera->fov -= (float)yoffset;
+//     if (camera->fov < 1.0f)
+//         camera->fov = 1.0f;
+//     if (camera->fov > 45.0f)
+//         camera->fov = 45.0f;
+// }

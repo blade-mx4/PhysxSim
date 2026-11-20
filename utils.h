@@ -64,7 +64,7 @@ struct Camera {
     GLfloat deltaTime = 0.0f ;
     GLfloat lastFrame = 0.0f ;
 
-    bool Mouse = true ;
+    bool firstMouse = true ;
     float yaw = -90.0f ;
     float pitch = 0.f ;
     float lastX = 800.0f / 2.0 ;
@@ -73,5 +73,8 @@ struct Camera {
 
     
     void Move(GLFWwindow *window , GLuint ps ) ;
+    // static void Mouse_Pan(GLFWwindow *window , double xpos ,double ypos ) ;
+    // static void Mouse_Scroll(GLFWwindow* window, double xoffset, double yoffset);
 } ;
+extern Camera cam ;
 
