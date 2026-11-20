@@ -10,10 +10,15 @@
 
 int  main (){
     Engine Env ;
-
+    Platform  plat ; 
+    Camera cam ;
+    Env.Ps() ;
     while (!glfwWindowShouldClose(Env.window)){
         Env.draw();
+        cam.Move(Env.window ,Env.ps ) ;
+        plat.draw(Env.ps) ;
+            
+        glfwSwapBuffers(Env.window);
+        glfwPollEvents();
     }
-
-
 }

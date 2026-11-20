@@ -16,10 +16,10 @@ struct Engine {
     const char *vertex_shader = R"(
         #version 330 core 
         layout(location=0) in vec3 Pos ;
-        uniform model , proj , view ;
+        uniform mat4 model , proj , view ;
         void main (){
         
-            gl_Position = vec4(Pos,1.0f) ;
+            gl_Position = proj*view*model*vec4(Pos,1.0f) ;
         }
     
     )" ;
@@ -27,9 +27,9 @@ struct Engine {
     const char *frag_shader = R"(
         #version 330 core 
         out vec4 Color ;
-
+        uniform vec4 grid_color ; // using uniform wont kill me 
         void main (){
-            Color = vec4(0.05f, 0.05f, 0.05f, 0.7f);
+            Color = grid_color ;
         }
     
     )" ;
@@ -39,16 +39,39 @@ struct Engine {
     GLuint Ps() ; // compilin of all shaders from program shader to vertex and frag shader 
 
     void draw() ;
-
+    
 } ;
 
-// struct Platform {
-//     Platform() ;
-//     void draw() ;
-// } Ground ;
+struct Platform {
+    GLuint VAO, VBO;
+    int vertexCount;
+    GLuint lineVAO, lineVBO;
+    int lineVertexCount;
 
-// struct Camera {
+    Platform() ;
+    void draw(GLuint ps) ;
+} ;
 
-// } Cam ;
 
+struct Camera {
+    // Everythin with movement  
+    glm::vec3 camPos = glm::vec3(.0f,5.0f,5.0f) ;
+    glm::vec3 camFront = glm::vec3(.0f,.0f,-3.0f);
+    glm::vec3 camUp = glm::vec3(.0f,1.f,0.0f);
+    
+    glm::mat4 view = glm::mat4(1.0f);
+
+    GLfloat deltaTime = 0.0f ;
+    GLfloat lastFrame = 0.0f ;
+
+    bool Mouse = true ;
+    float yaw = -90.0f ;
+    float pitch = 0.f ;
+    float lastX = 800.0f / 2.0 ;
+    float lastY = 600.0f /2.0f ;
+    float fov = 75.0f ; 
+
+    
+    void Move(GLFWwindow *window , GLuint ps ) ;
+} ;
 
